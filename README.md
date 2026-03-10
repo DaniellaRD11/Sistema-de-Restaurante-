@@ -1,1 +1,2 @@
-# Sistema-de-Restaurante-
+<div align="center">
+# **🍽️ Sistema de Gestión de Restaurante**
