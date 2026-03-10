@@ -64,10 +64,10 @@ Control de versiones: Git y GitHub
 
  # 📊 Beneficios del Sistema
 
-Mejora la organización del restaurante.
-Reduce errores en los pedidos.
-Facilita el control de inventario.
-Permite analizar las ventas mediante reportes.
+* Mejora la organización del restaurante.
+* Reduce errores en los pedidos.
+* Facilita el control de inventario.
+* Permite analizar las ventas mediante reportes.
 
 ## 🚀 Posibles Mejoras Futuras
 
