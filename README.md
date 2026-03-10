@@ -57,10 +57,10 @@ El sistema está dividido en varios módulos:
 **Reportes** → Estadísticas de ventas
 
 # 💻 Tecnologías Utilizadas
-Frontend: HTML, CSS, JavaScript
-Backend:JDK Spring Boot
-Base de datos: MariaDB
-Control de versiones: Git y GitHub
+* Frontend: HTML, CSS, JavaScript
+* Backend:JDK Spring Boot
+* Base de datos: MariaDB
+* Control de versiones: Git y GitHub
 
  # 📊 Beneficios del Sistema
 
@@ -71,8 +71,8 @@ Control de versiones: Git y GitHub
 
 ## 🚀 Posibles Mejoras Futuras
 
-Integración con aplicaciones de domicilio.
-Panel de estadísticas avanzadas.
+* Integración con aplicaciones de domicilio.
+* Panel de estadísticas avanzadas.
 
 ### 👩‍💻 Autor
 **Daniella Rodriguez**
