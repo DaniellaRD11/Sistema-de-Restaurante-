@@ -39,13 +39,13 @@ Gestionar facturas.
 
 # ⚙️ Funcionalidades del Sistema
 
-🔐 Autenticación de usuarios (Mesero / Gerente)
-📋 Visualización del menú
-🍝 Gestión de pedidos
-🧾 Generación de facturas
-📦 Gestión de inventario
-🍽️ Administración del menú
-📊 Generación de reportes de ventas
+1. 🔐 Autenticación de usuarios (Mesero / Gerente)
+2. 📋 Visualización del menú
+3. 🍝 Gestión de pedidos
+4. 🧾 Generación de facturas
+5. 📦 Gestión de inventario
+6. 🍽️ Administración del menú
+7. 📊 Generación de reportes de ventas
 
 # 🏗️ Estructura del Sistema
 El sistema está dividido en varios módulos:
