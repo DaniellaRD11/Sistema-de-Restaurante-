@@ -49,12 +49,12 @@ Gestionar facturas.
 
 # 🏗️ Estructura del Sistema
 El sistema está dividido en varios módulos:
-**Autenticación**→ Inicio de sesión de usuarios
-**Menú** → Visualización y gestión de platos
-**Pedidos** → Registro de órdenes de clientes
-**Facturación** → Generación y gestión de facturas
-**Inventario** → Control de productos disponibles
-**Reportes** → Estadísticas de ventas
+* **Autenticación**→ Inicio de sesión de usuarios
+* **Menú** → Visualización y gestión de platos
+* **Pedidos** → Registro de órdenes de clientes
+* **Facturación** → Generación y gestión de facturas
+* **Inventario** → Control de productos disponibles
+* **Reportes** → Estadísticas de ventas
 
 # 💻 Tecnologías Utilizadas
 * Frontend: HTML, CSS, JavaScript
