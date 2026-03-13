@@ -77,4 +77,4 @@ El sistema está dividido en varios módulos:
 ### 👩‍💻 Autor
 **Daniella Rodriguez**
 Estudiante de Ingeniería de Sistemas
-Rama master repositorio github
+* Rama master repositorio github
