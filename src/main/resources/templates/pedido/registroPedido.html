@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Pedido Completo</title>
+    <style>
+        body { font-family: sans-serif; background-color: #fff9f2; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #e86b14; }
+        
+        .section-box { border: 1px solid #ddd; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        label { display: block; margin-top: 10px; font-weight: bold; color: #b86a3d; }
+        select, input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* Estilos para la lista de platos agregados */
+        #lista-platos { margin-top: 15px; border-collapse: collapse; width: 100%; }
+        #lista-platos th, #lista-platos td { border: 1px solid #eee; padding: 8px; text-align: left; }
+        #lista-platos th { background-color: #ffe0b2; }
+        
+        .btn-add { background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 10px;}
+        .btn-submit { background-color: #e86b14; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; font-size: 16px; cursor: pointer; margin-top: 20px; font-weight: bold;}
+        .btn-remove { background-color: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📝 Nuevo Pedido</h2>
+
+    <form th:action="@{/pedido/guardar}" th:object="${pedidoDTO}" method="post" id="formPedido">
+        
+        <div class="section-box">
+            <h3>1. Seleccionar Mesa</h3>
+            <select th:field="*{mesaId}" required>
+                <option value="" disabled selected>-- Elige una mesa --</option>
+                <option th:each="m : ${mesas}" 
+                        th:value="${m.mesaId}" 
+                        th:text="${'Mesa ' + m.numeroMesa + ' (' + m.estado + ')'}"></option>
+            </select>
+        </div>
+
+        <div class="section-box">
+            <h3>2. Agregar Platos</h3>
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 3;">
+                    <select id="selectPlato">
+                        <option value="" disabled selected>-- Busca un plato --</option>
+                        <option th:each="p : ${platos}" 
+                                th:value="${p.platoId}" 
+                                th:data-nombre="${p.nombre}"
+                                th:data-precio="${p.precio}"
+                                th:text="${p.nombre + ' - $' + p.precio}"></option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <input type="number" id="inputCantidad" value="1" min="1" placeholder="Cant.">
+                </div>
+                <button type="button" class="btn-add" onclick="agregarPlatoALista()">➕</button>
+            </div>
+
+            <table id="lista-platos">
+                <thead>
+                    <tr>
+                        <th>Plato</th>
+                        <th>Cant.</th>
+                        <th>Subtotal</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <div id="inputsOcultos"></div>
+
+        <button type="submit" class="btn-submit">💾 Registrar Pedido Completo</button>
+    </form>
+    
+    <br>
+    <a href="/pedido/Listar" style="display:block; text-align:center;">Cancelar y Volver</a>
+</div>
+
+<script>
+    let contador = 0; // Para llevar el índice de la lista para Spring (detalles[0], detalles[1]...)
+
+    function agregarPlatoALista() {
+        // 1. Obtener valores del select y input
+        const select = document.getElementById('selectPlato');
+        const cantidadInput = document.getElementById('inputCantidad');
+        
+        const platoId = select.value;
+        const cantidad = cantidadInput.value;
+        const opcionSeleccionada = select.options[select.selectedIndex];
+        
+        if(!platoId || cantidad < 1) {
+            alert("Selecciona un plato y una cantidad válida.");
+            return;
+        }
+
+        const nombrePlato = opcionSeleccionada.getAttribute('data-nombre');
+        const precioPlato = parseFloat(opcionSeleccionada.getAttribute('data-precio'));
+        const subtotal = precioPlato * cantidad;
+
+        // 2. Dibujar en la tabla VISUAL
+        const tbody = document.getElementById('tablaBody');
+        const row = document.createElement('tr');
+        row.id = 'fila-' + contador;
+        
+        row.innerHTML = `
+            <td>${nombrePlato}</td>
+            <td>${cantidad}</td>
+            <td>$${subtotal}</td>
+            <td><button type="button" class="btn-remove" onclick="eliminarFila(${contador})">🗑️</button></td>
+        `;
+        tbody.appendChild(row);
+
+        // 3. Crear INPUTS OCULTOS para Spring Boot (La magia)
+        // Spring necesita: detalles[0].platoId, detalles[0].cantidad
+        const divOculto = document.getElementById('inputsOcultos');
+        
+        // Input para el ID del plato
+        const inputId = document.createElement('input');
+        inputId.type = 'hidden';
+        inputId.name = `detalles[${contador}].platoId`;
+        inputId.value = platoId;
+        inputId.id = `input-id-${contador}`;
+        
+        // Input para la Cantidad
+        const inputCant = document.createElement('input');
+        inputCant.type = 'hidden';
+        inputCant.name = `detalles[${contador}].cantidad`;
+        inputCant.value = cantidad;
+        inputCant.id = `input-cant-${contador}`;
+
+        divOculto.appendChild(inputId);
+        divOculto.appendChild(inputCant);
+
+        // 4. Limpiar y preparar siguiente
+        contador++;
+        select.value = "";
+        cantidadInput.value = 1;
+    }
+
+    function eliminarFila(index) {
+        // Eliminar fila visual
+        document.getElementById('fila-' + index).remove();
+        // Eliminar inputs ocultos (para que no se envíen)
+        document.getElementById('input-id-' + index).remove();
+        document.getElementById('input-cant-' + index).remove();
+    }
+</script>
+
+</body>
+</html>

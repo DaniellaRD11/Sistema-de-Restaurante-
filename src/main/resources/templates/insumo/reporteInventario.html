@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Inventario - NEXT FOOD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body style="background-color: #f5f0e6;">
+
+<div class="container mt-4 p-4 bg-white rounded shadow">
+    <h2 class="text-center mb-4" style="color:#8B4513;">📊 Reporte de Inventario</h2>
+
+    <!-- Filtros -->
+    <form th:action="@{/insumo/reporte}" method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Tipo de reporte:</label>
+            <select class="form-select" name="tipo">
+                <option value="diario">Diario</option>
+                <option value="semanal">Semanal</option>
+                <option value="mensual">Mensual</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Desde:</label>
+            <input type="date" name="fechaInicio" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Hasta:</label>
+            <input type="date" name="fechaFin" class="form-control">
+        </div>
+
+        <div class="col-md-12 text-center">
+            <button class="btn btn-primary mt-3" type="submit">📅 Generar Reporte</button>
+        </div>
+    </form>
+
+    <!-- Resultados -->
+    <div th:if="${insumos != null}">
+        <h5 class="text-center mb-3">Resultados del reporte</h5>
+
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Unidad</th>
+                    <th>Cantidad Actual</th>
+                    <th>Cantidad Mínima</th>
+                    <th>Estado</th>
+                    <th>Fecha Registro</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="insumo : ${insumos}">
+                    <td th:text="${insumo.id}"></td>
+                    <td th:text="${insumo.nombre}"></td>
+                    <td th:text="${insumo.unidadMedida}"></td>
+                    <td th:text="${insumo.cantidadActual}"></td>
+                    <td th:text="${insumo.cantidadMinima}"></td>
+                    <td>
+                        <span th:text="${insumo.estado}"
+                              th:classappend="${insumo.estado == 'AGOTADO'} ? 'badge bg-danger' :
+                                              (insumo.estado == 'BAJO') ? 'badge bg-warning text-dark' :
+                                              'badge bg-success'"></span>
+                    </td>
+                    <td th:text="${#temporals.format(insumo.fechaActualizacion, 'dd/MM/yyyy')}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card bg-danger text-white text-center p-3">
+                    <h5>Agotados</h5>
+                    <h4 th:text="${agotados}">0</h4>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card bg-warning text-dark text-center p-3">
+                    <h5>Bajo Stock</h5>
+                    <h4 th:text="${bajos}">0</h4>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card bg-success text-white text-center p-3">
+                    <h5>Suficientes</h5>
+                    <h4 th:text="${suficientes}">0</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a th:href="@{/insumo/listar}" class="btn btn-outline-secondary">↩️ Volver al Inventario</a>
+    </div>
+</div>
+
+</body>
+</html>

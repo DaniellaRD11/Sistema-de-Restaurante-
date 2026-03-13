@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Restaurante</title>
+    <style>
+        /* --- ESTILOS GENERALES (Paleta: Naranja, Crema, Blanco) --- */
+        body {
+            background-color: #FFF8E1; /* Crema suave */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #FFFFFF; /* Blanco */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border-top: 5px solid #FF8C00; /* Naranja fuerte */
+        }
+
+        h2 {
+            color: #E65100; /* Naranja oscuro para texto */
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #FFE0B2; /* Naranja muy claro */
+            border-radius: 5px;
+            box-sizing: border-box; /* Para que el padding no rompa el ancho */
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #FF9800; /* Naranja al enfocar */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #FF9800; /* Naranja botón */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #E65100; /* Naranja más oscuro al pasar mouse */
+        }
+
+        .error-message {
+            background-color: #FFCCBC;
+            color: #D84315;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .logout-message {
+            background-color: #C8E6C9;
+            color: #2E7D32;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Bienvenido</h2>
+        
+        <div th:if="${param.error}" class="error-message">
+            Usuario o contraseña incorrectos.
+        </div>
+
+        <div th:if="${param.logout}" class="logout-message">
+            Has cerrado sesión correctamente.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="input-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Ingresa tu usuario" required autofocus>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+            </div>
+
+            <button type="submit">INGRESAR</button>
+        </form>
+    </div>
+
+</body>
+</html>

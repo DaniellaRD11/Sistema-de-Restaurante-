@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Insumo - NEXT FOOD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f0e6;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Espacio superior */
+        .header {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            color: #ff6b35;
+            font-weight: 700;
+        }
+
+        .form-container {
+            max-width: 450px;
+            margin: 40px auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #e74c3c;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            background-color: #f2f2f2;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+        }
+
+        .btn-guardar {
+            background-color: #28a745;
+            color: white;
+            border-radius: 25px;
+            padding: 8px 20px;
+            border: none;
+        }
+
+        .btn-cancelar {
+            background-color: #b0b0b0;
+            color: white;
+            border-radius: 25px;
+            padding: 8px 20px;
+            border: none;
+        }
+
+        .btn-guardar:hover {
+            background-color: #218838;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #999999;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>NEXT FOOD</h1>
+    </div>
+
+    <div class="form-container">
+        <h2>Registrar Insumo</h2>
+
+        <form th:action="@{/insumo/guardar}" th:object="${insumo}" method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Tipo de Insumo</label>
+                <input type="text" class="form-control" th:field="*{nombre}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descripción</label>
+                <input type="text" class="form-control" th:field="*{descripcion}">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Unidad</label>
+                <select class="form-control" th:field="*{unidad}">
+                    <option value="KG">KG</option>
+                    <option value="LITROS">LITROS</option>
+                    <option value="UNIDAD">UNIDAD</option>
+					<option value="UNIDAD">LIBRA</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Cantidad Actual</label>
+                <input type="number" class="form-control" th:field="*{cantidadActual}" step="0.1" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Cantidad Mínima</label>
+                <input type="number" class="form-control" th:field="*{cantidadMinima}" step="0.1" required>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-guardar me-2">Guardar</button>
+                <a th:href="@{/insumo/lista}" class="btn btn-cancelar">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
+
+

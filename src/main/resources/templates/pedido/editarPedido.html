@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Pedido</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            width: 80%;
+            max-width: 700px;
+            margin: 2em auto;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        form {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 24px 32px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            font-weight: 300;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Importante para que el padding no desborde */
+        }
+        .detalle-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        .detalle-item .plato-select {
+            flex-grow: 1;
+        }
+        .detalle-item .cantidad-input {
+            width: 80px;
+        }
+        .btn {
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 1.05em;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+        .btn-primary {
+            background-color: #007bff;
+        }
+        .btn-success {
+            background-color: #28a745;
+            margin-right: 10px;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            font-size: 0.9em;
+            padding: 8px 12px;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Editar Pedido</h1>
+
+    <form th:action="@{/pedido/actualizar/{id}(id=${pedidoDTO.id})}" 
+          th:object="${pedidoDTO}" 
+          method="post">
+
+        <div class="form-group">
+            <label for="mesa">Mesa:</label>
+            <select id="mesa" th:field="*{mesaId}" class="form-control">
+                <option value="">Seleccione una mesa</option>
+                <option th:each="mesa : ${mesas}"
+                        th:value="${mesa.mesaId}"
+                        th:text="'Mesa ' + ${mesa.numeroMesa}"
+                        th:disabled="${(mesa.estado != 'DISPONIBLE')&& (mesa.mesaId != pedidoDTO.mesaId)}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Platos:</label>
+            <div id="detalles-container">
+                <div th:each="detalle, iterStat : *{detalles}" class="detalle-item">
+                    
+                    <select th:field="*{detalles[__${iterStat.index}__].platoId}" class="form-control plato-select">
+                        <option value="">Seleccione un plato</option>
+                        <option th:each="plato : ${platos}"
+                                th:value="${plato.platoId}"
+                                th:text="${plato.nombre}">
+                        </option>
+                    </select>
+
+                    <input type="number" th:field="*{detalles[__${iterStat.index}__].cantidad}" class="form-control cantidad-input" min="1" value="1" />
+
+                    <button type="button" class="btn btn-danger remove-detalle" onclick="removeDetalle(this)">Quitar</button>
+                </div>
+            </div>
+            
+            <button type="button" id="add-detalle" class="btn btn-primary" style="margin-top: 10px;">Añadir Plato</button>
+        </div>
+
+        <hr>
+
+        <div style="text-align: right;">
+            <button type="submit" class="btn btn-success">Actualizar Pedido</button>
+            <a th:href="@{/pedido/Listar}" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+    </form>
+
+
+    <script th:inline="javascript">
+        // 1. Pasamos la lista de Platos de Java (Thymeleaf) a JavaScript
+        const platosDisponibles = /*[[${platos}]]*/ [];
+        
+        // 2. Obtenemos el contenedor
+        const detallesContainer = document.getElementById('detalles-container');
+        
+        // 3. Obtenemos el índice inicial
+        // (Debe empezar *después* de los items que ya pintó Thymeleaf)
+        let detalleIndex = /*[[${#lists.size(pedidoDTO.detalles)}]]*/ 0;
+
+        // 4. Función para añadir una nueva fila
+        document.getElementById('add-detalle').addEventListener('click', function() {
+            
+            // Crear el div contenedor de la fila
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('detalle-item');
+
+            // --- Crear el Select de Platos ---
+            const selectPlato = document.createElement('select');
+            selectPlato.name = `detalles[${detalleIndex}].platoId`;
+            selectPlato.classList.add('form-control', 'plato-select');
+            
+            // Opción por defecto
+            let option = document.createElement('option');
+            option.value = "";
+            option.text = "Seleccione un plato";
+            selectPlato.appendChild(option);
+
+            // Llenar el select con los platos disponibles
+            platosDisponibles.forEach(plato => {
+                option = document.createElement('option');
+                option.value = plato.platoId; // Asumiendo que Plato.java tiene 'platoId'
+                option.text = plato.nombre;  // Asumiendo que Plato.java tiene 'nombre'
+                selectPlato.appendChild(option);
+            });
+            
+            // --- Crear el Input de Cantidad ---
+            const inputCantidad = document.createElement('input');
+            inputCantidad.type = 'number';
+            inputCantidad.name = `detalles[${detalleIndex}].cantidad`;
+            inputCantidad.classList.add('form-control', 'cantidad-input');
+            inputCantidad.min = 1;
+            inputCantidad.value = 1;
+
+            // --- Crear el Botón de Quitar ---
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.classList.add('btn', 'btn-danger', 'remove-detalle');
+            removeButton.innerText = 'Quitar';
+            removeButton.onclick = function() { removeDetalle(this); };
+
+            // Añadir los elementos al div de la fila
+            itemDiv.appendChild(selectPlato);
+            itemDiv.appendChild(inputCantidad);
+            itemDiv.appendChild(removeButton);
+
+            // Añadir la fila completa al contenedor
+            detallesContainer.appendChild(itemDiv);
+
+            // Incrementar el índice para la próxima fila
+            detalleIndex++;
+        });
+
+        // 5. Función para quitar una fila
+        function removeDetalle(button) {
+            // Encuentra el 'div' padre (la fila) y lo elimina
+            button.closest('.detalle-item').remove();
+        }
+    </script>
+
+</body>
+</html>

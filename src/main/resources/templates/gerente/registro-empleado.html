@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Registro de Personal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff8e1; /* Fondo Crema */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        /* --- TARJETA DEL FORMULARIO --- */
+        .registro-card {
+            background-color: #ffffff; /* Blanco */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Sombra suave */
+            width: 100%;
+            max-width: 400px;
+            border-top: 5px solid #ff9800; /* Borde Naranja superior */
+        }
+
+        h2 {
+            text-align: center;
+            color: #e65100; /* Naranja oscuro para el título */
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        /* --- CAMPOS DE TEXTO --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box; /* Para que el padding no rompa el ancho */
+            transition: border-color 0.3s ease;
+            background-color: #fafafa;
+        }
+
+        /* Efecto al hacer clic en un campo */
+        input:focus, select:focus {
+            border-color: #ff9800;
+            outline: none;
+            background-color: #fff;
+        }
+
+        /* --- BOTÓN REGISTRAR (PRINCIPAL) --- */
+        .btn-registrar {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff9800; /* Naranja Principal */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin-top: 10px;
+        }
+
+        .btn-registrar:hover {
+            background-color: #f57c00; /* Naranja un poco más oscuro al pasar el mouse */
+        }
+
+        .btn-registrar:active {
+            transform: scale(0.98); /* Pequeño efecto de presión */
+        }
+
+        /* --- BOTÓN VOLVER (SECUNDARIO) - NUEVO --- */
+        .btn-volver {
+            display: block; /* Para que ocupe el ancho y se comporte como bloque */
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: center;
+            background-color: transparent; /* Fondo transparente */
+            color: #ff9800; /* Texto naranja */
+            border: 2px solid #ff9800; /* Borde naranja */
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none; /* Quitar subrayado de enlace */
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .btn-volver:hover {
+            background-color: #ffe0b2; /* Fondo naranja muy clarito al pasar mouse */
+            color: #e65100;
+        }
+
+        /* --- MENSAJE DE ÉXITO --- */
+        .alerta-exito {
+            background-color: #d1fae5; /* Verde muy suave */
+            color: #065f46; /* Verde oscuro texto */
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #a7f3d0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="registro-card">
+        <h2>Registrar Empleado</h2>
+
+        <div th:if="${param.exito}" class="alerta-exito">
+            ¡Usuario registrado correctamente!
+        </div>
+
+        <form th:action="@{/vistas/gerente/registro}" method="post" th:object="${usuarioDTO}">
+            
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" th:field="*{nombre}" required placeholder="Ej: Juan Perez"/>
+            </div>
+
+            <div class="form-group">
+                <label>Usuario (Login)</label>
+                <input type="text" th:field="*{username}" required placeholder="Ej: jperez"/>
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" th:field="*{password}" required placeholder="••••••••"/>
+            </div>
+
+            <div class="form-group">
+                <label>Rol Asignado</label>
+                <select th:field="*{rol}">
+                    <option value="MESERO">Mesero</option>
+                   
+                    <option value="GERENTE">Gerente</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-registrar">Registrar Personal</button>
+
+        </form>
+
+        <a href="javascript:history.back()" class="btn-volver">Volver atrás</a>
+        
+        </div>
+
+</body>
+</html>

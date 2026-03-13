@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Pedidos</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff9f2; /* Fondo crema */
+            margin: 0;
+            padding: 40px;
+            color: #333;
+        }
+
+        /* ENCABEZADO PRINCIPAL */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            color: #e86b14; /* Naranja principal */
+            font-weight: 800;
+            margin: 0;
+        }
+
+        header h2 {
+            color: #b86a3d;
+            font-size: 1em;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        /* BOTÓN SALIR */
+        .btn-salir {
+            position: absolute;
+            right: 0;
+            top: 0;
+            background-color: #f1f1f1;
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .btn-salir:hover {
+            background-color: #e86b14;
+            color: #fff;
+        }
+
+        /* TARJETA CONTENEDORA */
+        .card {
+            background-color: #ffffff;
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 40px;
+        }
+
+        /* BOTÓN PRINCIPAL */
+        .btn-registrar {
+            background-color: #41b05f;
+            border: none;
+            padding: 10px 20px;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-registrar:hover {
+            background-color: #369d53;
+        }
+
+        /* FECHA */
+        .fecha {
+            font-size: 1em;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        /* ACCIONES SUPERIORES */
+        .acciones-header {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        /* BOTONES DE ACCIÓN */
+        .btn-accion {
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: 0.3s;
+        }
+
+        .btn-accion:hover:not(.disabled) {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* COLORES BOTONES */
+        #btn-ver {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        #btn-editar {
+            background-color: #dfe3e7;
+            color: #333;
+        }
+
+        #btn-eliminar {
+            background-color: #e64a2e;
+            color: #fff;
+        }
+
+        .btn-accion.disabled {
+            background-color: #eaeaea;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        /* TABLA */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #fff4eb;
+            color: #e86b14;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:hover td {
+            background-color: #fff8f2;
+        }
+
+        td[colspan="7"] {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+
+        /* RADIO BUTTON */
+        input[type="radio"] {
+            accent-color: #e86b14;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>NEXT FOOD</h1>
+        <h2>LISTA DE PEDIDOS</h2>
+        <a href="/" class="btn-salir">Salir</a>
+    </header>
+
+    <div class="card">
+        <a th:href="@{/pedido/nuevo}" class="btn-registrar">Registrar Pedido</a>
+
+
+        <p class="fecha">
+			<br>
+            Fecha: <span th:text="${#dates.format(new java.util.Date(), 'dd/MM/yyyy')}">31/10/2025</span>
+        </p>
+
+        <div class="acciones-header">
+            <a id="btn-ver" class="btn-accion disabled" href="#">Ver Detalles</a>
+            <a id="btn-editar" class="btn-accion disabled" href="#">Editar</a>
+            <a id="btn-eliminar" class="btn-accion disabled" href="#">Eliminar</a>
+        </div>
+           <br>
+        <table>
+            <thead>
+                <tr>
+                    <th>  </th>
+                    <th>Número mesa</th>
+                    <th>Plato</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                    <th>Detalle</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="pedido, iterStat : ${pedidos}">
+                    <td>
+                        <input type="radio" name="selectedPedido"
+                               th:value="${pedido.pedidoId}"
+                               th:data-ver-url="@{/pedido/{id}(id=${pedido.pedidoId})}"
+                               th:data-eliminar-url="@{/pedido/eliminar/{id}(id=${pedido.pedidoId})}"
+                               th:data-editar-url="@{/pedido/editar/{id}(id=${pedido.pedidoId})}"
+                               onclick="actualizarBotones(this)">
+                    </td>
+                    <td th:text="${pedido.mesa.numeroMesa}">5</td>
+                    <td th:text="${!#lists.isEmpty(pedido.detalles)} ? ${pedido.detalles[0].plato.nombre} : 'N/A'">Pollo Asado</td>
+                    <td th:text="${!#lists.isEmpty(pedido.detalles)} ? ${pedido.detalles[0].cantidad} : '0'">2</td>
+                   
+                    <td th:text="${#numbers.formatCurrency(pedido.total)}">$ 55.00</td>
+                    <td th:text="${pedido.estado}">Abierto</td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(pedidos)}">
+                    <td colspan="7">No hay pedidos registrados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function actualizarBotones(radio) {
+            const btnVer = document.getElementById('btn-ver');
+            const btnEditar = document.getElementById('btn-editar');
+            const btnEliminar = document.getElementById('btn-eliminar');
+
+            if (radio.checked) {
+                btnVer.classList.remove('disabled');
+                btnVer.href = radio.dataset.verUrl;
+                
+                btnEditar.classList.remove('disabled');
+                btnEditar.href = radio.dataset.editarUrl; 
+                
+                btnEliminar.classList.remove('disabled');
+                btnEliminar.href = radio.dataset.eliminarUrl;
+
+                btnEliminar.onclick = (e) => {
+                    if (!confirm('¿Está seguro de que desea eliminar este pedido?')) {
+                        e.preventDefault();
+                    }
+                };
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.btn-accion').forEach(btn => {
+                btn.onclick = (e) => {
+                    if (btn.classList.contains('disabled')) {
+                        e.preventDefault();
+                    }
+                };
+            });
+        });
+    </script>
+
+</body>
+</html>

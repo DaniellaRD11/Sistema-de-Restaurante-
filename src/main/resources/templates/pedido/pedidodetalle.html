@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Pedido</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            width: 80%;
+            max-width: 900px;
+            margin: 2em auto;
+            color: #333;
+            background-color: #f4f7f6;
+        }
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 24px 32px;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            font-weight: 300;
+            font-size: 2.5em;
+            margin-top: 0;
+            color: #1a1a1a;
+        }
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        
+        /* Estilos para totales */
+        .totals {
+            width: 50%;
+            margin-left: auto;
+            font-size: 1.2em;
+        }
+        .totals table { border: none; }
+        .totals td { border: none; padding: 8px 12px; }
+        .grand-total td {
+            font-size: 1.2em;
+            font-weight: bold;
+            border-top: 2px solid #333;
+            padding-top: 10px;
+        }
+        
+        /* Sección de Pago */
+        .payment-section {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: right;
+        }
+        .btn {
+            padding: 12px 22px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 1.05em;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+            color: white;
+        }
+        .btn-secondary { background-color: #6c757d; }
+        .btn-success { background-color: #28a745; }
+        .btn-success:hover { background-color: #218838; }
+        
+        select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" th:if="${pedido}">
+        <h1>Mesa <span th:text="${pedido.mesa.numeroMesa}"></span></h1>
+
+        <div class="info-header">
+            <div><strong>ID Pedido:</strong> <span id="pedidoIdDisplay" th:text="${pedido.pedidoId}">1</span></div>
+			<div><strong>Fecha:</strong> <span th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}">Fecha</span></div>
+			<div><strong>Estado:</strong> <span th:text="${pedido.estado}">ABIERTO</span></div>
+        </div>
+
+        <h3>Platos Solicitados</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th class="text-center" width="50">
+                        <input type="checkbox" id="checkAll" onclick="toggleAll(this)" checked>
+                    </th>
+                    <th>Plato</th>
+                    <th class="text-right">Cantidad</th>
+                    <th class="text-right">Precio Unit.</th>
+                    <th class="text-right">Subtotal</th>
+                    <th class="text-center">Estado Pago</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="detalle : ${pedido.detalles}">
+                    <td class="text-center">
+                        <input type="checkbox" class="plato-check" 
+                               th:value="${detalle.detallepId}" 
+                               th:if="${detalle.factura == null}" checked>
+                    </td>
+                    
+                    <td th:text="${detalle.plato.nombre}">Nombre</td>
+                    <td class="text-right" th:text="${detalle.cantidad}">1</td>
+                    <td class="text-right" th:text="${#numbers.formatCurrency(detalle.plato.precio)}">0.00</td>
+                    <td class="text-right" th:text="${#numbers.formatCurrency(detalle.subtotal)}">0.00</td>
+                    
+                    <td class="text-center">
+                        <span th:if="${detalle.factura == null}" style="color: red;">Pendiente</span>
+                        <span th:if="${detalle.factura != null}" style="color: green; font-weight: bold;">PAGADO</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <table>
+                <tr class="grand-total">
+                    <td>TOTAL PEDIDO:</td>
+					<td class="text-right" th:text="${#numbers.formatCurrency(pedido.total != null ? pedido.total : 0.0)}">$ 0.00</td>
+				</tr>
+            </table>
+        </div>
+
+        <div class="payment-section" th:if="${pedido.estado.name() == 'ABIERTO'}">
+            <h3>Facturación</h3>
+            <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">
+                Seleccione los platos de la lista y elija el método de pago. (La propina del 10% se agrega en la factura).
+            </p>
+            
+            <label for="metodoPago">Método de Pago:</label>
+            <select id="metodoPago">
+                <option value="EFECTIVO">Efectivo</option>
+                <option value="TARJETA">Tarjeta</option>
+                <option value="TRANSFERENCIA">Transferencia</option>
+            </select>
+
+            <button type="button" class="btn btn-success" onclick="generarFactura()">
+                💰 Cobrar e Imprimir Factura
+            </button>
+        </div>
+        
+        <div class="actions" style="margin-top: 20px;">
+             <a th:href="@{/pedido/Listar}" class="btn btn-secondary">← Volver a Lista de Pedidos</a>
+        </div>
+
+    </div>
+
+    <script>
+        // Función para marcar/desmarcar todos
+        function toggleAll(source) {
+            checkboxes = document.getElementsByClassName('plato-check');
+            for(var i=0, n=checkboxes.length;i<n;i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+
+        async function generarFactura() {
+            // 1. Obtener ID del pedido
+            const pedidoId = document.getElementById('pedidoIdDisplay').innerText;
+            const metodoPago = document.getElementById('metodoPago').value;
+
+            // 2. Obtener IDs de los platos seleccionados
+            const checkboxes = document.querySelectorAll('.plato-check:checked');
+            const detallesIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+            if (detallesIds.length === 0) {
+                alert("Por favor, selecciona al menos un plato para cobrar.");
+                return;
+            }
+
+            // 3. Crear el objeto JSON para enviar
+            const payload = {
+                pedidoId: pedidoId,
+                detallesIds: detallesIds,
+                metodoPago: metodoPago
+            };
+
+            try {
+                // 4. Llamar a TU Backend (FacturaControlador)
+                const response = await fetch('/api/facturas/generar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText);
+                }
+
+                const factura = await response.json();
+                
+                // 5. Éxito: Abrir el PDF y recargar
+                alert('Factura generada con éxito! ID: ' + factura.facturaId);
+                
+                // Abrir PDF en nueva pestaña
+                window.open('/api/facturas/pdf/' + factura.facturaId, '_blank');
+                
+                // Recargar la página para actualizar estados
+                location.reload();
+
+            } catch (error) {
+                alert('Error al facturar: ' + error.message);
+                console.error(error);
+            }
+        }
+    </script>
+
+</body>
+</html>

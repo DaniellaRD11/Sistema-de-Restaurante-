@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Plato - NEXT FOOD</title>
+    <style>
+        :root {
+            --color-fondo: #FAF8F5; --color-tarjeta: #FFFFFF;
+            --color-primario: #F97316; --color-texto: #333333;
+            --color-borde: #F97316; --color-estado-disponible: #22C55E;
+            --color-estado-agotado: #EF4444;
+        }
+        body {
+            font-family: Arial, sans-serif; background-color: var(--color-fondo);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; padding: 2rem;
+            color: var(--color-texto); box-sizing: border-box;
+        }
+        /* Solo mostramos el formulario, centrado */
+        .form-editar {
+            background-color: var(--color-tarjeta);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 90%;
+            max-width: 700px;
+        }
+        .btn-actualizar {
+            background-color: var(--color-primario); color: white; border: none;
+            padding: 0.8rem 1.5rem; border-radius: 12px; font-size: 1rem;
+            font-weight: bold; cursor: pointer; transition: background-color 0.3s;
+        }
+        .btn-actualizar:hover { background-color: #E7640D; }
+        .form-editar h2 { margin-top: 0; color: var(--color-primario); }
+        .form-grupo { margin-bottom: 1.5rem; }
+        .form-grupo label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        .form-grupo input[type="text"],
+        .form-grupo input[type="number"],
+        .form-grupo textarea,
+        .form-grupo select {
+            width: 100%; padding: 0.8rem; border: 1px solid #DDD;
+            border-radius: 8px; box-sizing: border-box; font-family: Arial, sans-serif;
+        }
+        .form-grupo textarea { resize: vertical; min-height: 80px; }
+        .form-grupo-inline { display: flex; gap: 1rem; }
+        .form-grupo-inline .form-grupo { flex: 1; }
+        .btn-cancelar {
+            text-decoration: none;
+            color: #777;
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <form class="form-editar" 
+          th:action="@{/menu/guardar}" 
+          th:object="${plato}" 
+          method="POST">
+        
+        <h2>✏️ Editar Plato</h2>
+
+        <input type="hidden" th:field="*{platoId}" />
+
+        <div class="form-grupo">
+            <label for="nombre">Nombre del Plato</label>
+            <input type="text" id="nombre" th:field="*{nombre}" required>
+        </div>
+        
+        <div class="form-grupo">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" th:field="*{descripcion}"></textarea>
+        </div>
+
+        <div class="form-grupo-inline">
+            <div class="form-grupo">
+                <label for="categoria">Categoría</label>
+                <input type="text" id="categoria" th:field="*{categoria}" required>
+            </div>
+            <div class="form-grupo">
+                <label for="precio">Precio</label>
+                <input type="number" id="precio" th:field="*{precio}" step="0.01" required>
+            </div>
+        </div>
+        
+        <div class="form-grupo">
+            <label for="disponible">Estado</label>
+            <select id="disponible" th:field="*{disponible}">
+                <option value="Disponible">Disponible</option>
+                <option value="Agotado">Agotado</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-actualizar">Actualizar Plato</button>
+        <a th:href="@{/menu/Listar}" class="btn-cancelar">Cancelar</a>
+    </form>
+
+</body>
+</html>
